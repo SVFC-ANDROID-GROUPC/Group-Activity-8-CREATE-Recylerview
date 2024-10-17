@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "215526447961",
+    "project_id": "first-android-firebase-cc86c",
+    "storage_bucket": "first-android-firebase-cc86c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215526447961:android:029ea5ecc2fb58fe26ca48",
+        "android_client_info": {
+          "package_name": "com.jorimpablico.addandfetchfirestore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhUSsCCfd_p5cOIRkgn7NPcEZfynd4m4M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
