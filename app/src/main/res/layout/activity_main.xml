@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home Page"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:textSize="35sp"
+        android:paddingTop="25dp"
+        android:paddingBottom="125dp"/>
+
+    <Button
+        android:id="@+id/btn_product_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Product Page"
+        android:backgroundTint="@color/black"
+        />
+
+    <Button
+        android:id="@+id/btn_employee_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Employee Page"
+        android:backgroundTint="@color/black"
+        android:layout_marginTop="10dp"
+        />
+
+    <Button
+        android:id="@+id/btn_book_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Book Page"
+        android:backgroundTint="@color/black"
+        android:layout_marginTop="10dp"
+        />
+
+    <Button
+        android:id="@+id/btn_university_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="University Page"
+        android:backgroundTint="@color/black"
+        android:layout_marginTop="10dp"
+        />
+
+    <Button
+        android:id="@+id/btn_restaurant_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Restaurant Page"
+        android:backgroundTint="@color/black"
+        android:layout_marginTop="10dp"
+
+        />
+
+</LinearLayout>
