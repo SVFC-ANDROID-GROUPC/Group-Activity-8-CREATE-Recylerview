@@ -4,19 +4,27 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.jorimpablico.addandfetchfirestore.R;
+import com.jorimpablico.addandfetchfirestore.adapter.RestaurantAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestaurantPage extends AppCompatActivity {
 
+    RecyclerView rvRestaurant;
+    List<Restaurant> restaurantList = new ArrayList<>();
+    List<Restaurant> restaurantList1 = new ArrayList<>();
+    RestaurantAdapter restaurantAdapter;
     EditText etName, etType;
     Button btnAddItem, btnGetItem;
-    TextView tvResults;
 
     Restaurant restaurantObject;
     StringBuilder stringBuilder;
@@ -30,12 +38,13 @@ public class RestaurantPage extends AppCompatActivity {
         restaurantObject = new Restaurant();
         stringBuilder = new StringBuilder();
         firestore = FirebaseFirestore.getInstance();
+        restaurantAdapter = new RestaurantAdapter(restaurantList);
 
+        rvRestaurant = findViewById(R.id.rv_restaurant);
         etName = findViewById(R.id.et_name);
         etType = findViewById(R.id.et_type);
         btnAddItem = findViewById(R.id.btn_add_item);
         btnGetItem = findViewById(R.id.btn_get_item);
-        tvResults = findViewById(R.id.tv_results);
 
         btnAddItem.setOnClickListener(v -> addFunction());
 
@@ -51,10 +60,10 @@ public class RestaurantPage extends AppCompatActivity {
 
         firestore.collection("restaurant")
                 .add(restaurantObject).addOnSuccessListener(documentReference -> {
-                    stringBuilder.append("\n\n Restaurant Name: ").append(restaurantObject.getName());
-                    stringBuilder.append("\n Type: ").append(restaurantObject.getType());
+                    restaurantList.add(new Restaurant(restaurantObject.getName(), restaurantObject.getType()));
 
-                    tvResults.setText(stringBuilder.toString());
+                    rvRestaurant.setAdapter(restaurantAdapter);
+                    rvRestaurant.setLayoutManager(new LinearLayoutManager(this));
                 }).addOnFailureListener(e -> {
                     Log.e("MAIN", e.getMessage());
                 });
@@ -63,7 +72,8 @@ public class RestaurantPage extends AppCompatActivity {
     }
 
     private void getFunction(){
-        StringBuilder stringBuilder1 = new StringBuilder();
+        restaurantList1.clear();
+        RestaurantAdapter restaurantAdapter1 = new RestaurantAdapter(restaurantList);
 
         firestore.collection("restaurant")
                 .get()
@@ -72,11 +82,11 @@ public class RestaurantPage extends AppCompatActivity {
 
                         for(QueryDocumentSnapshot document: task.getResult()){
                             Restaurant restaurant = document.toObject(Restaurant.class);
-                            stringBuilder1.append("\n\n Restaurant Name: ").append(restaurant.getName());
-                            stringBuilder1.append("\n Type: ").append(restaurant.getType());
+                            restaurantList1.add(new Restaurant(restaurant.getName(), restaurant.getType()));
                         }
 
-                        tvResults.setText(stringBuilder1.toString());
+                        rvRestaurant.setAdapter(restaurantAdapter1);
+                        rvRestaurant.setLayoutManager(new LinearLayoutManager(this));
                     }
                     else {
                         Log.e("MAIN", task.getException().getMessage());

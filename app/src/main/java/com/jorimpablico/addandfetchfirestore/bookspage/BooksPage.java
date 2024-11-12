@@ -4,22 +4,29 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.jorimpablico.addandfetchfirestore.R;
+import com.jorimpablico.addandfetchfirestore.adapter.BookAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BooksPage extends AppCompatActivity {
 
+    RecyclerView rvBook;
+    List<Book> bookList = new ArrayList<>();
+    List<Book> bookList1 = new ArrayList<>();
+    BookAdapter bookAdapter;
     EditText etTitle, etAuthor;
     Button btnAddItem, btnGetItem;
-    TextView tvResults;
 
     Book bookObject;
-    StringBuilder stringBuilder;
     FirebaseFirestore firestore;
 
     @Override
@@ -28,14 +35,14 @@ public class BooksPage extends AppCompatActivity {
         setContentView(R.layout.activity_books_page);
 
         bookObject = new Book();
-        stringBuilder = new StringBuilder();
         firestore = FirebaseFirestore.getInstance();
+        bookAdapter = new BookAdapter(bookList);
 
+        rvBook = findViewById(R.id.rv_books);
         etTitle = findViewById(R.id.et_title);
         etAuthor = findViewById(R.id.et_author);
         btnAddItem = findViewById(R.id.btn_add_item);
         btnGetItem = findViewById(R.id.btn_get_item);
-        tvResults = findViewById(R.id.tv_results);
 
         btnAddItem.setOnClickListener(v -> addFunction());
 
@@ -51,10 +58,10 @@ public class BooksPage extends AppCompatActivity {
 
         firestore.collection("books")
                 .add(bookObject).addOnSuccessListener(documentReference -> {
-                    stringBuilder.append("\n\n Title: ").append(bookObject.getTitle());
-                    stringBuilder.append("\n Author: ").append(bookObject.getAuthor());
+                    bookList.add(new Book(bookObject.getTitle(), bookObject.getAuthor()));
 
-                    tvResults.setText(stringBuilder.toString());
+                    rvBook.setAdapter(bookAdapter);
+                    rvBook.setLayoutManager(new LinearLayoutManager(this));
                 }).addOnFailureListener(e -> {
                     Log.e("MAIN", e.getMessage());
                 });
@@ -63,7 +70,8 @@ public class BooksPage extends AppCompatActivity {
     }
 
     private void getFunction(){
-        StringBuilder stringBuilder1 = new StringBuilder();
+        bookList1.clear();
+        BookAdapter bookAdapter1 = new BookAdapter(bookList1);
 
         firestore.collection("books")
                 .get()
@@ -72,11 +80,11 @@ public class BooksPage extends AppCompatActivity {
 
                         for(QueryDocumentSnapshot document: task.getResult()){
                             Book book = document.toObject(Book.class);
-                            stringBuilder1.append("\n\n Title: ").append(book.getTitle());
-                            stringBuilder1.append("\n Author: ").append(book.getAuthor());
+                            bookList1.add(new Book(book.getTitle(), book.getAuthor()));
                         }
 
-                        tvResults.setText(stringBuilder1.toString());
+                        rvBook.setAdapter(bookAdapter1);
+                        rvBook.setLayoutManager(new LinearLayoutManager(this));
                     }
                     else {
                         Log.e("MAIN", task.getException().getMessage());

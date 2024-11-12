@@ -1,14 +1,14 @@
 package com.jorimpablico.addandfetchfirestore.productpage;
 
 public class Product {
-    private int price;
     private String name;
+    private int price;
 
     public Product() {}
 
-    public Product(int price, String name) {
-        this.price = price;
+    public Product(String name, int price) {
         this.name = name;
+        this.price = price;
     }
 
     public int getPrice() {
@@ -27,3 +27,4 @@ public class Product {
         this.name = name;
     }
 }
+

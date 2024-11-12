@@ -4,24 +4,29 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.jorimpablico.addandfetchfirestore.R;
+import com.jorimpablico.addandfetchfirestore.adapter.ProductAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductPage extends AppCompatActivity {
 
+    RecyclerView rvProduct;
+    List<Product> productList = new ArrayList<>();
+    List<Product> productList1 = new ArrayList<>();
+    ProductAdapter productAdapter;
     EditText etName, etPrice;
     Button btnAddItem, btnGetItem;
-    TextView tvResults;
 
     Product productObject;
-
-    StringBuilder stringBuilder;
     FirebaseFirestore firestore;
 
     @Override
@@ -30,14 +35,14 @@ public class ProductPage extends AppCompatActivity {
         setContentView(R.layout.activity_product_page);
 
         productObject = new Product();
-        stringBuilder = new StringBuilder();
         firestore = FirebaseFirestore.getInstance();
+        productAdapter = new ProductAdapter(productList);
 
+        rvProduct = findViewById(R.id.rv_product);
         etName = findViewById(R.id.et_name);
         etPrice = findViewById(R.id.et_price);
         btnAddItem = findViewById(R.id.btn_add_item);
         btnGetItem = findViewById(R.id.btn_get_item);
-        tvResults = findViewById(R.id.tv_results);
 
         btnAddItem.setOnClickListener(v -> addFunction());
 
@@ -53,10 +58,10 @@ public class ProductPage extends AppCompatActivity {
 
         firestore.collection("product")
                 .add(productObject).addOnSuccessListener(documentReference -> {
-                    stringBuilder.append("\n\n Name: ").append(productObject.getName());
-                    stringBuilder.append("\n Price: ").append(productObject.getPrice());
+                    productList.add(new Product(productObject.getName(), productObject.getPrice()));
 
-                    tvResults.setText(stringBuilder.toString());
+                    rvProduct.setAdapter(productAdapter);
+                    rvProduct.setLayoutManager(new LinearLayoutManager(this));
                 }).addOnFailureListener(e -> {
                     Log.e("MAIN", e.getMessage());
                 });
@@ -65,7 +70,8 @@ public class ProductPage extends AppCompatActivity {
     }
 
     private void getFunction(){
-        StringBuilder stringBuilder1 = new StringBuilder();
+        productList1.clear();
+        ProductAdapter productAdapter1 = new ProductAdapter(productList1);
 
         firestore.collection("product")
                 .get()
@@ -74,11 +80,10 @@ public class ProductPage extends AppCompatActivity {
 
                         for(QueryDocumentSnapshot document: task.getResult()){
                             Product product = document.toObject(Product.class);
-                            stringBuilder1.append("\n\n Name: ").append(product.getName());
-                            stringBuilder1.append("\n Price: ").append(product.getPrice());
+                            productList1.add(new Product(product.getName(), product.getPrice()));
                         }
-
-                        tvResults.setText(stringBuilder1.toString());
+                        rvProduct.setAdapter(productAdapter1);
+                        rvProduct.setLayoutManager(new LinearLayoutManager(this));
                     }
                     else {
                         Log.e("MAIN", task.getException().getMessage());

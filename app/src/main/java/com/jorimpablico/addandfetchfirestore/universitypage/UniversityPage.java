@@ -4,22 +4,29 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.jorimpablico.addandfetchfirestore.R;
+import com.jorimpablico.addandfetchfirestore.adapter.UniversityAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UniversityPage extends AppCompatActivity {
 
+    RecyclerView rvUniversity;
+    List<University> universityList = new ArrayList<>();
+    List<University> universityList1 = new ArrayList<>();
+    UniversityAdapter universityAdapter;
     EditText etName, etType;
     Button btnAddItem, btnGetItem;
-    TextView tvResults;
 
     University universityObject;
-    StringBuilder stringBuilder;
     FirebaseFirestore firestore;
 
     @Override
@@ -28,14 +35,14 @@ public class UniversityPage extends AppCompatActivity {
         setContentView(R.layout.activity_university_page);
 
         universityObject = new University();
-        stringBuilder = new StringBuilder();
         firestore = FirebaseFirestore.getInstance();
+        universityAdapter = new UniversityAdapter(universityList);
 
+        rvUniversity = findViewById(R.id.rv_university);
         etName = findViewById(R.id.et_name);
         etType = findViewById(R.id.et_type);
         btnAddItem = findViewById(R.id.btn_add_item);
         btnGetItem = findViewById(R.id.btn_get_item);
-        tvResults = findViewById(R.id.tv_results);
 
         btnAddItem.setOnClickListener(v -> addFunction());
 
@@ -51,10 +58,10 @@ public class UniversityPage extends AppCompatActivity {
 
         firestore.collection("university")
                 .add(universityObject).addOnSuccessListener(documentReference -> {
-                    stringBuilder.append("\n\n School Name: ").append(universityObject.getName());
-                    stringBuilder.append("\n Type: ").append(universityObject.getType());
+                    universityList.add(new University(universityObject.getName(), universityObject.getType()));
 
-                    tvResults.setText(stringBuilder.toString());
+                    rvUniversity.setAdapter(universityAdapter);
+                    rvUniversity.setLayoutManager(new LinearLayoutManager(this));
                 }).addOnFailureListener(e -> {
                     Log.e("MAIN", e.getMessage());
                 });
@@ -63,7 +70,8 @@ public class UniversityPage extends AppCompatActivity {
     }
 
     private void getFunction(){
-        StringBuilder stringBuilder1 = new StringBuilder();
+        universityList1.clear();
+        UniversityAdapter universityAdapter1 = new UniversityAdapter(universityList1);
 
         firestore.collection("university")
                 .get()
@@ -72,11 +80,11 @@ public class UniversityPage extends AppCompatActivity {
 
                         for(QueryDocumentSnapshot document: task.getResult()){
                             University university = document.toObject(University.class);
-                            stringBuilder1.append("\n\n School Name: ").append(university.getName());
-                            stringBuilder1.append("\n Type: ").append(university.getType());
+                            universityList1.add(new University(university.getName(), university.getType()));
                         }
 
-                        tvResults.setText(stringBuilder1.toString());
+                        rvUniversity.setAdapter(universityAdapter1);
+                        rvUniversity.setLayoutManager(new LinearLayoutManager(this));
                     }
                     else {
                         Log.e("MAIN", task.getException().getMessage());
