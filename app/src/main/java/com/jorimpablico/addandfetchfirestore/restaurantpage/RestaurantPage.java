@@ -73,7 +73,7 @@ public class RestaurantPage extends AppCompatActivity {
 
     private void getFunction(){
         restaurantList1.clear();
-        RestaurantAdapter restaurantAdapter1 = new RestaurantAdapter(restaurantList);
+        RestaurantAdapter restaurantAdapter1 = new RestaurantAdapter(restaurantList1);
 
         firestore.collection("restaurant")
                 .get()
